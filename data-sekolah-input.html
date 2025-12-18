@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Input Data Sekolah - Export to Excel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 1em;
+            white-space: nowrap;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom: 3px solid #667eea;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .item-list {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .summary h3 {
+            margin-bottom: 10px;
+        }
+
+        .export-section {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 20px 30px;
+            border-top: 2px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .counter {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .export-section {
+                flex-direction: column;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 Input Data Sekolah</h1>
+            <p>Isi data sekolah dan ekspor ke Excel untuk import ke sistem Dashboard Guru</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('sekolah')">🏫 Sekolah</button>
+            <button class="tab" onclick="switchTab('tahun-ajaran')">📅 Tahun Ajaran</button>
+            <button class="tab" onclick="switchTab('kelas')">🏛️ Kelas <span class="counter" id="count-kelas">0</span></button>
+            <button class="tab" onclick="switchTab('mapel')">📚 Mata Pelajaran <span class="counter" id="count-mapel">0</span></button>
+            <button class="tab" onclick="switchTab('guru')">👨‍🏫 Guru <span class="counter" id="count-guru">0</span></button>
+            <button class="tab" onclick="switchTab('guru-mengajar')">📖 Guru Mengajar <span class="counter" id="count-mengajar">0</span></button>
+            <button class="tab" onclick="switchTab('siswa')">👨‍🎓 Siswa <span class="counter" id="count-siswa">0</span></button>
+        </div>
+
+        <!-- Tab: Sekolah -->
+        <div id="tab-sekolah" class="tab-content active">
+            <div class="alert alert-info">
+                ℹ️ Isi informasi dasar sekolah Anda
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Nama Sekolah *</label>
+                    <input type="text" id="nama_sekolah" placeholder="SMA Negeri 1 Jakarta">
+                </div>
+                <div class="form-group">
+                    <label>NPSN *</label>
+                    <input type="text" id="npsn" placeholder="20104001">
+                </div>
+                <div class="form-group">
+                    <label>Provinsi *</label>
+                    <input type="text" id="provinsi" placeholder="DKI Jakarta">
+                </div>
+                <div class="form-group">
+                    <label>Kota *</label>
+                    <input type="text" id="kota" placeholder="Jakarta Pusat">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Alamat *</label>
+                <textarea id="alamat" rows="3" placeholder="Jl. Sudirman No. 1"></textarea>
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Telepon *</label>
+                    <input type="tel" id="telepon" placeholder="021-1234567">
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="email" placeholder="info@sekolah.sch.id">
+                </div>
+                <div class="form-group">
+                    <label>Token Balance</label>
+                    <input type="number" id="token_balance" value="1000">
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Tahun Ajaran -->
+        <div id="tab-tahun-ajaran" class="tab-content">
+            <div class="alert alert-info">
+                ℹ️ Tentukan tahun ajaran aktif
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Tahun Ajaran *</label>
+                    <input type="text" id="tahun" placeholder="2024/2025">
+                </div>
+                <div class="form-group">
+                    <label>Tanggal Mulai *</label>
+                    <input type="date" id="tanggal_mulai">
+                </div>
+                <div class="form-group">
+                    <label>Tanggal Selesai *</label>
+                    <input type="date" id="tanggal_selesai">
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Kelas -->
+        <div id="tab-kelas" class="tab-content">
+            <div class="alert alert-info">
+                ℹ️ Tambahkan kelas yang ada di sekolah
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Nama Kelas</label>
+                    <input type="text" id="input-nama_kelas" placeholder="10 IPA 1">
+                </div>
+                <div class="form-group">
+                    <label>Tingkat</label>
+                    <input type="text" id="input-tingkat" placeholder="10">
+                </div>
+                <div class="form-group">
+                    <label>Kapasitas</label>
+                    <input type="number" id="input-kapasitas" value="36">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="addKelas()">➕ Tambah Kelas</button>
+            <div id="list-kelas" class="item-list"></div>
+        </div>
+
+        <!-- Tab: Mata Pelajaran -->
+        <div id="tab-mapel" class="tab-content">
+            <div class="alert alert-info">
+                ℹ️ Tambahkan mata pelajaran yang diajarkan
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Nama Mata Pelajaran</label>
+                    <input type="text" id="input-nama_mapel" placeholder="Matematika">
+                </div>
+                <div class="form-group">
+                    <label>Kode</label>
+                    <input type="text" id="input-kode" placeholder="MAT">
+                </div>
+                <div class="form-group">
+                    <label>Wajib?</label>
+                    <select id="input-wajib">
+                        <option value="Y">Ya</option>
+                        <option value="N">Tidak</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="addMapel()">➕ Tambah Mata Pelajaran</button>
+            <div id="list-mapel" class="item-list"></div>
+        </div>
+
+        <!-- Tab: Guru -->
+        <div id="tab-guru" class="tab-content">
+            <div class="alert alert-info">
+                ℹ️ Tambahkan data guru (NIP opsional untuk guru non-PNS/honorer)
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="input-nama_lengkap_guru" placeholder="Budi Santoso, S.Pd">
+                </div>
+                <div class="form-group">
+                    <label>NIP (Opsional)</label>
+                    <input type="text" id="input-nip" placeholder="197001011998031001">
+                </div>
+                <div class="form-group">
+                    <label>No. HP</label>
+                    <input type="tel" id="input-hp" placeholder="082111111111">
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="input-username" placeholder="guru1">
+                </div>
+                <div class="form-group">
+                    <label>Jabatan</label>
+                    <select id="input-jabatan">
+                        <option value="guru_mapel">Guru Mata Pelajaran</option>
+                        <option value="wali_kelas">Wali Kelas</option>
+                        <option value="guru_bk">Guru BK</option>
+                        <option value="kepala_sekolah">Kepala Sekolah</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="addGuru()">➕ Tambah Guru</button>
+            <div id="list-guru" class="item-list"></div>
+        </div>
+
+        <!-- Tab: Guru Mengajar -->
+        <div id="tab-guru-mengajar" class="tab-content">
+            <div class="alert alert-info">
+                ℹ️ Tentukan guru mengajar mata pelajaran mana di kelas mana
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Guru</label>
+                    <select id="input-username_guru">
+                        <option value="">-- Pilih Guru --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mata Pelajaran</label>
+                    <select id="input-kode_mapel">
+                        <option value="">-- Pilih Mapel --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Kelas</label>
+                    <select id="input-nama_kelas_mengajar">
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Jam per Minggu</label>
+                    <input type="number" id="input-jam_per_minggu" value="4">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="addGuruMengajar()">➕ Tambah Mapping</button>
+            <div id="list-guru-mengajar" class="item-list"></div>
+        </div>
+
+        <!-- Tab: Siswa -->
+        <div id="tab-siswa" class="tab-content">
+            <div class="alert alert-info">
+                ℹ️ Tambahkan data siswa
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="input-nama_lengkap_siswa" placeholder="Andi Pratama">
+                </div>
+                <div class="form-group">
+                    <label>NISN</label>
+                    <input type="text" id="input-nisn" placeholder="0051234501">
+                </div>
+                <div class="form-group">
+                    <label>NIS</label>
+                    <input type="text" id="input-nis" placeholder="10001">
+                </div>
+                <div class="form-group">
+                    <label>Jenis Kelamin</label>
+                    <select id="input-jk">
+                        <option value="L">Laki-laki</option>
+                        <option value="P">Perempuan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Kelas</label>
+                    <select id="input-nama_kelas_siswa">
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="input-username_siswa" placeholder="siswa1">
+                </div>
+                <div class="form-group">
+                    <label>Nama Orang Tua</label>
+                    <input type="text" id="input-nama_ortu" placeholder="Bapak Andi Suryanto">
+                </div>
+                <div class="form-group">
+                    <label>HP Orang Tua</label>
+                    <input type="tel" id="input-hp_ortu" placeholder="081555111111">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="addSiswa()">➕ Tambah Siswa</button>
+            <div id="list-siswa" class="item-list"></div>
+        </div>
+
+        <!-- Export Section (Sticky Bottom) -->
+        <div class="export-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress" style="width: 0%">0% Complete</div>
+            </div>
+            <button class="btn btn-success" onclick="exportToExcel()">📥 Export ke Excel</button>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage
+        let data = {
+            kelas: [],
+            mapel: [],
+            guru: [],
+            guruMengajar: [],
+            siswa: []
+        };
+
+        // Switch Tab
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Add Kelas
+        function addKelas() {
+            const nama = document.getElementById('input-nama_kelas').value;
+            const tingkat = document.getElementById('input-tingkat').value;
+            const kapasitas = parseInt(document.getElementById('input-kapasitas').value);
+
+            if (!nama || !tingkat) {
+                alert('Lengkapi semua field!');
+                return;
+            }
+
+            data.kelas.push({ nama_kelas: nama, tingkat, kapasitas });
+            updateKelasUI();
+            updateProgress();
+            
+            // Clear inputs
+            document.getElementById('input-nama_kelas').value = '';
+            document.getElementById('input-tingkat').value = '';
+            document.getElementById('input-kapasitas').value = '36';
+        }
+
+        function updateKelasUI() {
+            const list = document.getElementById('list-kelas');
+            list.innerHTML = data.kelas.map((k, idx) => `
+                <div class="item">
+                    <div class="item-info">
+                        <strong>${k.nama_kelas}</strong> - Tingkat ${k.tingkat} (Kapasitas: ${k.kapasitas})
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteKelas(${idx})">🗑️ Hapus</button>
+                </div>
+            `).join('');
+            
+            document.getElementById('count-kelas').textContent = data.kelas.length;
+            updateDropdowns();
+        }
+
+        function deleteKelas(idx) {
+            if (confirm('Yakin hapus data ini?')) {
+                data.kelas.splice(idx, 1);
+                updateKelasUI();
+                updateProgress();
+            }
+        }
+
+        // Add Mapel
+        function addMapel() {
+            const nama = document.getElementById('input-nama_mapel').value;
+            const kode = document.getElementById('input-kode').value;
+            const wajib = document.getElementById('input-wajib').value;
+
+            if (!nama || !kode) {
+                alert('Lengkapi semua field!');
+                return;
+            }
+
+            data.mapel.push({ nama_mapel: nama, kode, wajib });
+            updateMapelUI();
+            updateProgress();
+            
+            document.getElementById('input-nama_mapel').value = '';
+            document.getElementById('input-kode').value = '';
+        }
+
+        function updateMapelUI() {
+            const list = document.getElementById('list-mapel');
+            list.innerHTML = data.mapel.map((m, idx) => `
+                <div class="item">
+                    <div class="item-info">
+                        <strong>${m.nama_mapel}</strong> (${m.kode}) - ${m.wajib === 'Y' ? '✅ Wajib' : '⭕ Pilihan'}
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteMapel(${idx})">🗑️ Hapus</button>
+                </div>
+            `).join('');
+            
+            document.getElementById('count-mapel').textContent = data.mapel.length;
+            updateDropdowns();
+        }
+
+        function deleteMapel(idx) {
+            if (confirm('Yakin hapus data ini?')) {
+                data.mapel.splice(idx, 1);
+                updateMapelUI();
+                updateProgress();
+            }
+        }
+
+        // Add Guru
+        function addGuru() {
+            const nama = document.getElementById('input-nama_lengkap_guru').value;
+            const nip = document.getElementById('input-nip').value;
+            const hp = document.getElementById('input-hp').value;
+            const username = document.getElementById('input-username').value;
+            const jabatan = document.getElementById('input-jabatan').value;
+
+            if (!nama || !hp || !username) {
+                alert('Lengkapi field wajib (Nama, HP, Username)!');
+                return;
+            }
+
+            data.guru.push({ nama_lengkap: nama, nip, hp, username, jabatan });
+            updateGuruUI();
+            updateProgress();
+            
+            document.getElementById('input-nama_lengkap_guru').value = '';
+            document.getElementById('input-nip').value = '';
+            document.getElementById('input-hp').value = '';
+            document.getElementById('input-username').value = '';
+        }
+
+        function updateGuruUI() {
+            const list = document.getElementById('list-guru');
+            list.innerHTML = data.guru.map((g, idx) => `
+                <div class="item">
+                    <div class="item-info">
+                        <strong>${g.nama_lengkap}</strong> (${g.username})<br>
+                        <small>${g.nip || 'Tanpa NIP'} | ${g.hp} | ${g.jabatan}</small>
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteGuru(${idx})">🗑️ Hapus</button>
+                </div>
+            `).join('');
+            
+            document.getElementById('count-guru').textContent = data.guru.length;
+            updateDropdowns();
+        }
+
+        function deleteGuru(idx) {
+            if (confirm('Yakin hapus data ini?')) {
+                data.guru.splice(idx, 1);
+                updateGuruUI();
+                updateProgress();
+            }
+        }
+
+        // Add Guru Mengajar
+        function addGuruMengajar() {
+            const username = document.getElementById('input-username_guru').value;
+            const kode = document.getElementById('input-kode_mapel').value;
+            const kelas = document.getElementById('input-nama_kelas_mengajar').value;
+            const jam = parseInt(document.getElementById('input-jam_per_minggu').value);
+
+            if (!username || !kode || !kelas) {
+                alert('Lengkapi semua field!');
+                return;
+            }
+
+            data.guruMengajar.push({ username_guru: username, kode_mapel: kode, nama_kelas: kelas, jam_per_minggu: jam });
+            updateGuruMengajarUI();
+            updateProgress();
+            
+            document.getElementById('input-username_guru').value = '';
+            document.getElementById('input-kode_mapel').value = '';
+            document.getElementById('input-nama_kelas_mengajar').value = '';
+            document.getElementById('input-jam_per_minggu').value = '4';
+        }
+
+        function updateGuruMengajarUI() {
+            const list = document.getElementById('list-guru-mengajar');
+            list.innerHTML = data.guruMengajar.map((gm, idx) => {
+                const guru = data.guru.find(g => g.username === gm.username_guru);
+                const mapel = data.mapel.find(m => m.kode === gm.kode_mapel);
+                return `
+                    <div class="item">
+                        <div class="item-info">
+                            <strong>${guru?.nama_lengkap || '?'}</strong> mengajar <strong>${mapel?.nama_mapel || '?'}</strong> di <strong>${gm.nama_kelas}</strong> (${gm.jam_per_minggu} jam/minggu)
+                        </div>
+                        <button class="btn btn-danger" onclick="deleteGuruMengajar(${idx})">🗑️ Hapus</button>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('count-mengajar').textContent = data.guruMengajar.length;
+        }
+
+        function deleteGuruMengajar(idx) {
+            if (confirm('Yakin hapus data ini?')) {
+                data.guruMengajar.splice(idx, 1);
+                updateGuruMengajarUI();
+                updateProgress();
+            }
+        }
+
+        // Add Siswa
+        function addSiswa() {
+            const nama = document.getElementById('input-nama_lengkap_siswa').value;
+            const nisn = document.getElementById('input-nisn').value;
+            const nis = document.getElementById('input-nis').value;
+            const jk = document.getElementById('input-jk').value;
+            const kelas = document.getElementById('input-nama_kelas_siswa').value;
+            const username = document.getElementById('input-username_siswa').value;
+            const nama_ortu = document.getElementById('input-nama_ortu').value;
+            const hp_ortu = document.getElementById('input-hp_ortu').value;
+
+            if (!nama || !nisn || !nis || !kelas || !username) {
+                alert('Lengkapi field wajib!');
+                return;
+            }
+
+            data.siswa.push({ nama_lengkap: nama, nisn, nis, jk, nama_kelas: kelas, username, nama_ortu, hp_ortu });
+            updateSiswaUI();
+            updateProgress();
+            
+            document.getElementById('input-nama_lengkap_siswa').value = '';
+            document.getElementById('input-nisn').value = '';
+            document.getElementById('input-nis').value = '';
+            document.getElementById('input-nama_kelas_siswa').value = '';
+            document.getElementById('input-username_siswa').value = '';
+            document.getElementById('input-nama_ortu').value = '';
+            document.getElementById('input-hp_ortu').value = '';
+        }
+
+        function updateSiswaUI() {
+            const list = document.getElementById('list-siswa');
+            list.innerHTML = data.siswa.map((s, idx) => `
+                <div class="item">
+                    <div class="item-info">
+                        <strong>${s.nama_lengkap}</strong> (${s.username}) - ${s.jk === 'L' ? '👨' : '👩'}<br>
+                        <small>NISN: ${s.nisn} | NIS: ${s.nis} | Kelas: ${s.nama_kelas}</small>
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteSiswa(${idx})">🗑️ Hapus</button>
+                </div>
+            `).join('');
+            
+            document.getElementById('count-siswa').textContent = data.siswa.length;
+        }
+
+        function deleteSiswa(idx) {
+            if (confirm('Yakin hapus data ini?')) {
+                data.siswa.splice(idx, 1);
+                updateSiswaUI();
+                updateProgress();
+            }
+        }
+
+        // Update Dropdowns
+        function updateDropdowns() {
+            // Update guru dropdown
+            const guruSelect = document.getElementById('input-username_guru');
+            guruSelect.innerHTML = '<option value="">-- Pilih Guru --</option>' +
+                data.guru.map(g => `<option value="${g.username}">${g.nama_lengkap}</option>`).join('');
+
+            // Update mapel dropdown
+            const mapelSelect = document.getElementById('input-kode_mapel');
+            mapelSelect.innerHTML = '<option value="">-- Pilih Mapel --</option>' +
+                data.mapel.map(m => `<option value="${m.kode}">${m.nama_mapel}</option>`).join('');
+
+            // Update kelas dropdown (untuk guru mengajar)
+            const kelasSelectMengajar = document.getElementById('input-nama_kelas_mengajar');
+            kelasSelectMengajar.innerHTML = '<option value="">-- Pilih Kelas --</option>' +
+                data.kelas.map(k => `<option value="${k.nama_kelas}">${k.nama_kelas}</option>`).join('');
+
+            // Update kelas dropdown (untuk siswa)
+            const kelasSelectSiswa = document.getElementById('input-nama_kelas_siswa');
+            kelasSelectSiswa.innerHTML = '<option value="">-- Pilih Kelas --</option>' +
+                data.kelas.map(k => `<option value="${k.nama_kelas}">${k.nama_kelas}</option>`).join('');
+        }
+
+        // Update Progress
+        function updateProgress() {
+            const checks = [
+                document.getElementById('nama_sekolah').value !== '',
+                document.getElementById('tahun').value !== '',
+                data.kelas.length > 0,
+                data.mapel.length > 0,
+                data.guru.length > 0,
+                data.guruMengajar.length > 0,
+                data.siswa.length > 0
+            ];
+
+            const completed = checks.filter(Boolean).length;
+            const percentage = Math.round((completed / 7) * 100);
+
+            const progressBar = document.getElementById('progress');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '% Complete';
+        }
+
+        // Export to Excel
+        function exportToExcel() {
+            // Validate required data
+            const namaSekolah = document.getElementById('nama_sekolah').value;
+            const tahun = document.getElementById('tahun').value;
+
+            if (!namaSekolah || !tahun) {
+                alert('⚠️ Lengkapi minimal data Sekolah dan Tahun Ajaran!');
+                return;
+            }
+
+            // Prepare SEKOLAH sheet
+            const sekolahData = [{
+                nama_sekolah: document.getElementById('nama_sekolah').value,
+                npsn: document.getElementById('npsn').value,
+                provinsi: document.getElementById('provinsi').value,
+                kota: document.getElementById('kota').value,
+                alamat: document.getElementById('alamat').value,
+                telepon: document.getElementById('telepon').value,
+                email: document.getElementById('email').value,
+                token_balance: parseInt(document.getElementById('token_balance').value)
+            }];
+
+            // Prepare TAHUN_AJARAN sheet
+            const tahunAjaranData = [{
+                tahun: document.getElementById('tahun').value,
+                tanggal_mulai: document.getElementById('tanggal_mulai').value,
+                tanggal_selesai: document.getElementById('tanggal_selesai').value
+            }];
+
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+
+            // Add sheets
+            const wsSekolah = XLSX.utils.json_to_sheet(sekolahData);
+            XLSX.utils.book_append_sheet(wb, wsSekolah, 'SEKOLAH');
+
+            const wsTahunAjaran = XLSX.utils.json_to_sheet(tahunAjaranData);
+            XLSX.utils.book_append_sheet(wb, wsTahunAjaran, 'TAHUN_AJARAN');
+
+            if (data.kelas.length > 0) {
+                const wsKelas = XLSX.utils.json_to_sheet(data.kelas);
+                XLSX.utils.book_append_sheet(wb, wsKelas, 'KELAS');
+            }
+
+            if (data.mapel.length > 0) {
+                const wsMapel = XLSX.utils.json_to_sheet(data.mapel);
+                XLSX.utils.book_append_sheet(wb, wsMapel, 'MATA_PELAJARAN');
+            }
+
+            if (data.guru.length > 0) {
+                const wsGuru = XLSX.utils.json_to_sheet(data.guru);
+                XLSX.utils.book_append_sheet(wb, wsGuru, 'GURU');
+            }
+
+            if (data.guruMengajar.length > 0) {
+                const wsGuruMengajar = XLSX.utils.json_to_sheet(data.guruMengajar);
+                XLSX.utils.book_append_sheet(wb, wsGuruMengajar, 'GURU_MENGAJAR');
+            }
+
+            if (data.siswa.length > 0) {
+                const wsSiswa = XLSX.utils.json_to_sheet(data.siswa);
+                XLSX.utils.book_append_sheet(wb, wsSiswa, 'SISWA');
+            }
+
+            // Generate filename
+            const filename = `data-sekolah-${namaSekolah.replace(/\s+/g, '-')}.xlsx`;
+
+            // Download
+            XLSX.writeFile(wb, filename);
+
+            alert(`✅ File Excel berhasil didownload: ${filename}\n\nLangkah selanjutnya:\n1. Simpan file di folder: data-import/data-sekolah.xlsx\n2. Jalankan: npm run db:import`);
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>
