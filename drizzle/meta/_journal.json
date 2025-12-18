@@ -15,6 +15,27 @@
       "when": 1766060523811,
       "tag": "0001_red_pandemic",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1766060766000,
+      "tag": "0002_stormy_steel_serpent",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1766061085105,
+      "tag": "0003_blue_butterfly",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1766061347879,
+      "tag": "0004_light_lyja",
+      "breakpoints": true
     }
   ]
 }

@@ -4,12 +4,23 @@ import {
   usersTable, 
   academicYearsTable, 
   classesTable, 
-  subjectsTable 
+  subjectsTable,
+  teachersTable,
+  studentsTable,
+  teacherSubjectsTable,
+  attendanceTable,
+  teachingJournalTable,
+  gradesTable,
+  gradeAggregationsTable,
+  disciplineRecordsTable,
+  reportTemplatesTable,
+  generatedReportsTable,
+  tokenTransactionsTable,
 } from '@/schemas';
 
 async function testConnection() {
   try {
-    console.log('🔍 Testing database connection...\n');
+    console.log('🔍 Testing ALL 16 tables...\n');
 
     const tables = [
       { name: 'tenants', table: tenantsTable },
@@ -17,6 +28,17 @@ async function testConnection() {
       { name: 'academic_years', table: academicYearsTable },
       { name: 'classes', table: classesTable },
       { name: 'subjects', table: subjectsTable },
+      { name: 'teachers', table: teachersTable },
+      { name: 'students', table: studentsTable },
+      { name: 'teacher_subjects', table: teacherSubjectsTable },
+      { name: 'attendance', table: attendanceTable },
+      { name: 'teaching_journal', table: teachingJournalTable },
+      { name: 'grades', table: gradesTable },
+      { name: 'grade_aggregations', table: gradeAggregationsTable },
+      { name: 'discipline_records', table: disciplineRecordsTable },
+      { name: 'report_templates', table: reportTemplatesTable },
+      { name: 'generated_reports', table: generatedReportsTable },
+      { name: 'token_transactions', table: tokenTransactionsTable },
     ];
 
     for (const { name, table } of tables) {
@@ -24,9 +46,10 @@ async function testConnection() {
       console.log(`✅ ${name}: ${rows.length} rows`);
     }
 
-    console.log('\n🎉 Database connection test PASSED!');
+    console.log('\n🎉 ALL 16 TABLES TEST PASSED!');
+    console.log('💪 DATABASE SCHEMA 100% COMPLETE!');
   } catch (error) {
-    console.error('❌ Database connection test FAILED:', error);
+    console.error('❌ Test FAILED:', error);
     process.exit(1);
   }
 }
