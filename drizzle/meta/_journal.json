@@ -8,6 +8,13 @@
       "when": 1766051601644,
       "tag": "0000_shallow_sentry",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1766060523811,
+      "tag": "0001_red_pandemic",
+      "breakpoints": true
     }
   ]
 }

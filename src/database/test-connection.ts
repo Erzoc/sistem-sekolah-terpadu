@@ -1,21 +1,28 @@
 import { db } from './client';
-import { tenantsTable, usersTable } from '@/schemas';
+import { 
+  tenantsTable, 
+  usersTable, 
+  academicYearsTable, 
+  classesTable, 
+  subjectsTable 
+} from '@/schemas';
 
 async function testConnection() {
   try {
     console.log('🔍 Testing database connection...\n');
 
-    // Test 1: Query tenants table
-    console.log('Test 1: Query tenants table');
-    const tenants = await db.select().from(tenantsTable);
-    console.log('✅ Tenants table accessible');
-    console.log('   Rows found:', tenants.length);
+    const tables = [
+      { name: 'tenants', table: tenantsTable },
+      { name: 'users', table: usersTable },
+      { name: 'academic_years', table: academicYearsTable },
+      { name: 'classes', table: classesTable },
+      { name: 'subjects', table: subjectsTable },
+    ];
 
-    // Test 2: Query users table
-    console.log('\nTest 2: Query users table');
-    const users = await db.select().from(usersTable);
-    console.log('✅ Users table accessible');
-    console.log('   Rows found:', users.length);
+    for (const { name, table } of tables) {
+      const rows = await db.select().from(table);
+      console.log(`✅ ${name}: ${rows.length} rows`);
+    }
 
     console.log('\n🎉 Database connection test PASSED!');
   } catch (error) {
@@ -24,5 +31,4 @@ async function testConnection() {
   }
 }
 
-// Run test
 testConnection();
