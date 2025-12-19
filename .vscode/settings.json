@@ -1,3 +1,9 @@
 {
-    "liveServer.settings.multiRootWorkspaceName": "sstv1"
+    "liveServer.settings.multiRootWorkspaceName": "sstv1",
+    "css.validate": false,
+    "scss.validate": false,
+    "less.validate": false,
+    "files.associations": {
+        "*.css": "tailwindcss"
+    }
 }

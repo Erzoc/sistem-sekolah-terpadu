@@ -1,0 +1,66 @@
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { auth } from '@/lib/auth/auth';
+
+// Define route patterns and their required roles
+const roleRoutes = {
+  '/admin': ['super_admin'],
+  '/school-admin': ['super_admin', 'admin_sekolah'],
+  '/teacher': ['super_admin', 'admin_sekolah', 'guru'],
+  '/student': ['super_admin', 'admin_sekolah', 'guru', 'siswa'],
+  '/api/v1': ['super_admin', 'admin_sekolah', 'guru', 'siswa'],
+};
+
+// Public routes that don't require authentication
+const publicRoutes = [
+  '/',
+  '/login',
+  '/logout',
+  '/unauthorized',
+  '/api/auth',
+  '/_next',
+  '/favicon.ico',
+];
+
+export default auth((req: any) => {  // ⬅ FIX: Add type annotation
+  const { pathname } = req.nextUrl;
+  
+  // Allow public routes
+  if (publicRoutes.some(route => pathname.startsWith(route))) {
+    return NextResponse.next();
+  }
+
+  // Check if user is authenticated
+  if (!req.auth || !req.auth.user) {
+    const loginUrl = new URL('/login', req.url);
+    loginUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  const userRole = (req.auth.user as any).role;
+  
+  // Check role-based access
+  for (const [route, allowedRoles] of Object.entries(roleRoutes)) {
+    if (pathname.startsWith(route)) {
+      if (!allowedRoles.includes(userRole)) {
+        return NextResponse.redirect(new URL('/unauthorized', req.url));
+      }
+    }
+  }
+
+  // Allow access
+  return NextResponse.next();
+});
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files (public folder)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|public).*)',
+  ],
+};
