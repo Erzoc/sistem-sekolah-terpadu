@@ -3,11 +3,10 @@ import { authOptions } from "@/lib/auth/auth";
 import { db } from "@/database/client";
 import { kaldikFiles } from "@/schemas/kaldik-files";
 import { eq, and } from "drizzle-orm";
-import { extractKaldikData } from "@/lib/ai/kaldik-extractor";
 import { join } from "path";
 import { readFile } from "fs/promises";
 
-// ✅ PENTING: Mencegah Next.js mencoba render statis saat build
+// ✅ PENTING: Mencegah Next.js render statis saat build
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
@@ -31,9 +30,7 @@ export async function POST(request: Request) {
       .where(
         and(
           eq(kaldikFiles.fileId, fileId),
-          // Gunakan user ID jika tenantId belum ready di session
-          // eq(kaldikFiles.tenantId, session.user.tenantId) 
-          eq(kaldikFiles.tenantId, session.user.id) // Fallback aman
+          eq(kaldikFiles.tenantId, session.user.id)
         )
       )
       .limit(1);
@@ -42,21 +39,22 @@ export async function POST(request: Request) {
       return Response.json({ error: "File not found" }, { status: 404 });
     }
 
-    // AMBIL OBJEK DARI ARRAY
     const selectedFile = rows[0];
 
-    // Mulai proses
+    // Update status ke processing
     await db.update(kaldikFiles)
       .set({ status: "processing" })
       .where(eq(kaldikFiles.fileId, fileId));
 
+    // Baca file dari storage
     const pathToFile = join(process.cwd(), "public", selectedFile.storagePath);
     const fileBuffer = await readFile(pathToFile);
 
-    // AI Ekstraksi - pastikan di dalam try-catch
+    // ✅ DYNAMIC IMPORT - Supaya tidak load saat build time
+    const { extractKaldikData } = await import("@/lib/ai/kaldik-extractor");
     const result = await extractKaldikData(fileBuffer, selectedFile.mimeType);
 
-    // Update DB
+    // Update DB dengan hasil
     await db.update(kaldikFiles)
       .set({
         status: "completed",
@@ -69,7 +67,7 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error("ROUTE_ERROR:", error);
     
-    // Attempt to update error status
+    // Update status error
     try {
       await db.update(kaldikFiles)
         .set({
@@ -78,9 +76,11 @@ export async function POST(request: Request) {
         })
         .where(eq(kaldikFiles.fileId, fileId));
     } catch (e) {
-      // Ignore update error
+      // Ignore DB update error
     }
 
-    return Response.json({ error: error.message || "Failed" }, { status: 500 });
+    return Response.json({ 
+      error: error.message || "Failed to extract calendar data" 
+    }, { status: 500 });
   }
 }
