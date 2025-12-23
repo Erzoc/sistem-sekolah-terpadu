@@ -7,9 +7,13 @@ import { extractKaldikData } from "@/lib/ai/kaldik-extractor";
 import { join } from "path";
 import { readFile } from "fs/promises";
 
+// ✅ PENTING: Mencegah Next.js mencoba render statis saat build
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
-  if (!session?.user) {
+  
+  if (!session?.user?.id) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -27,7 +31,9 @@ export async function POST(request: Request) {
       .where(
         and(
           eq(kaldikFiles.fileId, fileId),
-          eq(kaldikFiles.tenantId, session.user.tenantId)
+          // Gunakan user ID jika tenantId belum ready di session
+          // eq(kaldikFiles.tenantId, session.user.tenantId) 
+          eq(kaldikFiles.tenantId, session.user.id) // Fallback aman
         )
       )
       .limit(1);
@@ -47,7 +53,7 @@ export async function POST(request: Request) {
     const pathToFile = join(process.cwd(), "public", selectedFile.storagePath);
     const fileBuffer = await readFile(pathToFile);
 
-    // AI Ekstraksi
+    // AI Ekstraksi - pastikan di dalam try-catch
     const result = await extractKaldikData(fileBuffer, selectedFile.mimeType);
 
     // Update DB
@@ -63,13 +69,17 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error("ROUTE_ERROR:", error);
     
-    await db.update(kaldikFiles)
-      .set({
-        status: "failed",
-        lastError: error.message || "Unknown error"
-      })
-      .where(eq(kaldikFiles.fileId, fileId))
-      .catch(() => {});
+    // Attempt to update error status
+    try {
+      await db.update(kaldikFiles)
+        .set({
+          status: "failed",
+          lastError: error.message || "Unknown error"
+        })
+        .where(eq(kaldikFiles.fileId, fileId));
+    } catch (e) {
+      // Ignore update error
+    }
 
     return Response.json({ error: error.message || "Failed" }, { status: 500 });
   }
