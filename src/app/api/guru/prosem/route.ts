@@ -1,7 +1,9 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { db, prosemRecords } from '@/schemas';
+import { eq, desc } from 'drizzle-orm';
+import { nanoid } from 'nanoid';
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,13 +12,15 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const prosem = await prisma.prosem.findMany({
-      where: { guruId: session.user.id },
-      orderBy: { createdAt: 'desc' },
-    });
+    const prosem = await db
+      .select()
+      .from(prosemRecords)
+      .where(eq(prosemRecords.tenantId, session.user.id))
+      .orderBy(desc(prosemRecords.createdAt));
 
     return NextResponse.json(prosem);
   } catch (error) {
+    console.error('GET /api/guru/prosem error:', error);
     return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 });
   }
 }
@@ -29,26 +33,35 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { protaId, weeklyBreakdown } = body;
+    const { protaRecordId, simpleCalendarId, mapelCode, mapelName, academicYear, semester, weeklySchedule, totalWeeks, effectiveWeeks } = body;
 
-    if (!protaId) {
+    if (!protaRecordId || !simpleCalendarId) {
       return NextResponse.json(
-        { error: 'Missing protaId' },
+        { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
-    const prosem = await prisma.prosem.create({
-      data: {
-        guruId: session.user.id,
-        protaId,
-        weeklyBreakdown: weeklyBreakdown || [],
-      },
-    });
+    const [prosem] = await db
+      .insert(prosemRecords)
+      .values({
+        id: nanoid(),
+        tenantId: session.user.id,
+        protaRecordId,
+        simpleCalendarId,
+        mapelCode,
+        mapelName,
+        academicYear,
+        semester: parseInt(semester),
+        weeklyScheduleJson: JSON.stringify(weeklySchedule || []),
+        totalWeeks: totalWeeks || 0,
+        effectiveWeeks: effectiveWeeks || 0,
+      })
+      .returning();
 
     return NextResponse.json(prosem, { status: 201 });
   } catch (error) {
-    console.error('Error:', error);
+    console.error('POST /api/guru/prosem error:', error);
     return NextResponse.json({ error: 'Failed to create' }, { status: 500 });
   }
 }

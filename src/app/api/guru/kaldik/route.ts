@@ -1,7 +1,9 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { db, simpleCalendars } from '@/schemas';
+import { eq, desc } from 'drizzle-orm';
+import { nanoid } from 'nanoid';
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,13 +12,15 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const calendars = await prisma.kaldik.findMany({
-      where: { guruId: session.user.id },
-      orderBy: { createdAt: 'desc' },
-    });
+    const calendars = await db
+      .select()
+      .from(simpleCalendars)
+      .where(eq(simpleCalendars.tenantId, session.user.id))
+      .orderBy(desc(simpleCalendars.createdAt));
 
     return NextResponse.json(calendars);
   } catch (error) {
+    console.error('GET /api/guru/kaldik error:', error);
     return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 });
   }
 }
@@ -38,21 +42,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const kaldik = await prisma.kaldik.create({
-      data: {
-        guruId: session.user.id,
+    const [kaldik] = await db
+      .insert(simpleCalendars)
+      .values({
+        id: nanoid(),
+        tenantId: session.user.id,
         academicYear,
         semester: parseInt(semester),
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
-        effectiveWeeks,
-        holidays: holidays || [],
-      },
-    });
+        startDate,
+        endDate,
+        effectiveWeeks: effectiveWeeks || 0,
+        holidaysJson: JSON.stringify(holidays || []),
+      })
+      .returning();
 
     return NextResponse.json(kaldik, { status: 201 });
   } catch (error) {
-    console.error('Error:', error);
+    console.error('POST /api/guru/kaldik error:', error);
     return NextResponse.json({ error: 'Failed to create' }, { status: 500 });
   }
 }

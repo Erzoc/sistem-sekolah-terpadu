@@ -1,10 +1,14 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { db, rppRecords } from '@/schemas';
+import { eq, desc } from 'drizzle-orm';
 import { OpenAIClient } from '@/lib/openai-client';
+import { nanoid } from 'nanoid';
 
-const aiClient = new OpenAIClient();
+// HAPUS inisialisasi di sini!
+// const aiClient = new OpenAIClient(); <-- JANGAN DI SINI
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,13 +17,15 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const rpp = await prisma.rpp.findMany({
-      where: { guruId: session.user.id },
-      orderBy: { createdAt: 'desc' },
-    });
+    const rpp = await db
+      .select()
+      .from(rppRecords)
+      .where(eq(rppRecords.tenantId, session.user.id))
+      .orderBy(desc(rppRecords.createdAt));
 
     return NextResponse.json(rpp);
   } catch (error) {
+    console.error('GET /api/guru/rpp error:', error);
     return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 });
   }
 }
@@ -32,9 +38,9 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { prosemId, cpCode, cpName, mapelName, kelasLevel, pertemuanKe, useAI } = body;
+    const { prosemRecordId, protaRecordId, simpleCalendarId, mapelCode, mapelName, kelasLevel, kelasDivision, academicYear, semester, pertemuanList, totalPertemuan, useAI } = body;
 
-    if (!prosemId || !cpCode) {
+    if (!prosemRecordId || !protaRecordId || !simpleCalendarId || !mapelName) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -42,39 +48,47 @@ export async function POST(req: NextRequest) {
     }
 
     let rppData: any = {
-      guruId: session.user.id,
-      prosemId,
-      cpCode,
-      cpName,
+      id: nanoid(),
+      tenantId: session.user.id,
+      prosemRecordId,
+      protaRecordId,
+      simpleCalendarId,
+      mapelCode: mapelCode || '',
       mapelName,
-      kelasLevel,
-      pertemuanKe: pertemuanKe || 1,
+      kelasLevel: kelasLevel || '',
+      kelasDivision: kelasDivision || null,
+      academicYear,
+      semester: parseInt(semester),
+      pertemuanListJson: JSON.stringify(pertemuanList || []),
+      totalPertemuan: totalPertemuan || 1,
     };
 
     // AI Enhancement (Optional)
     if (useAI) {
       try {
+        // PINDAHKAN INISIALISASI KE SINI
+        const aiClient = new OpenAIClient(); 
         const aiResult = await aiClient.enhanceRpp({
-          cpCode,
-          cpName,
+          cpCode: '', // Tambahkan default
+          cpName: '', // Tambahkan default
           mapelName,
-          kelasLevel,
-          pertemuanKe: pertemuanKe || 1,
+          kelasLevel: kelasLevel || '',
+          pertemuanKe: 1, // Default pertemuan ke-1
         });
         rppData = { ...rppData, ...aiResult };
       } catch (aiError) {
-        console.warn('AI enhancement failed, using template:', aiError);
-        // Continue with template
+        console.warn('AI enhancement failed:', aiError);
       }
     }
 
-    const rpp = await prisma.rpp.create({
-      data: rppData,
-    });
+    const [rpp] = await db
+      .insert(rppRecords)
+      .values(rppData)
+      .returning();
 
     return NextResponse.json(rpp, { status: 201 });
   } catch (error) {
-    console.error('Error:', error);
+    console.error('POST /api/guru/rpp error:', error);
     return NextResponse.json({ error: 'Failed to create' }, { status: 500 });
   }
 }

@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth';
-import { db } from '@/schemas/db';
+import { db } from '@/schemas';
 import { kaldikFiles } from '@/schemas/kaldik-files';
 import { eq } from 'drizzle-orm';
 
