@@ -5,36 +5,22 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1766051601644,
-      "tag": "0000_shallow_sentry",
+      "when": 1766318305112,
+      "tag": "0000_dusty_lethal_legion",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "6",
-      "when": 1766060523811,
-      "tag": "0001_red_pandemic",
+      "when": 1766354176059,
+      "tag": "0001_chunky_leader",
       "breakpoints": true
     },
     {
       "idx": 2,
       "version": "6",
-      "when": 1766060766000,
-      "tag": "0002_stormy_steel_serpent",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1766061085105,
-      "tag": "0003_blue_butterfly",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1766061347879,
-      "tag": "0004_light_lyja",
+      "when": 1766356687452,
+      "tag": "0002_rare_champions",
       "breakpoints": true
     }
   ]

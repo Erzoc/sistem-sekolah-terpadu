@@ -1,3 +1,17 @@
+supabase project url : 
+https://rwtvrsplbnrdxjetvkpk.supabase.co
+- anon supabase : 
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3dHZyc3BsYm5yZHhqZXR2a3BrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzOTU0MjUsImV4cCI6MjA4MTk3MTQyNX0.nadBOBPkSWbSnM72bCpY9rZ0USg8DkKcPGtBoRNlzEM
+
+Private key
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3dHZyc3BsYm5yZHhqZXR2a3BrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NjM5NTQyNSwiZXhwIjoyMDgxOTcxNDI1fQ.3mDapD5n1HSxIWWOq_2Qg4tBzGE4FBP2t_Hnb9Bl6Y8
+
+
+
+
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -34,3 +48,20 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# 🕌 SST v1 - School Super Tools (Madrasah Edition)
+
+Dashboard management system untuk Madrasah dengan fitur lengkap pengelolaan guru, siswa, mata pelajaran, kelas, dan penugasan guru.
+
+## 🚀 Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: TailwindCSS
+- **Charts**: Recharts
+- **Excel**: XLSX (SheetJS)
+- **Icons**: Heroicons
+- **State Management**: React Hooks
+
+## 📁 Project Structure
+

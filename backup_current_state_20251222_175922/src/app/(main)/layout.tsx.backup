@@ -1,0 +1,27 @@
+'use client';
+
+import { Inter } from 'next/font/google';
+import { SessionProvider } from 'next-auth/react';
+import '../globals.css';
+import Sidebar from '@/components/Sidebar';
+
+const inter = Inter({ subsets: ['latin'] });
+
+export default function MainLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="id">
+      <body className={inter.className}>
+        <SessionProvider>
+          <div className="flex min-h-screen bg-gray-50">
+            <Sidebar />
+            <main className="flex-1">{children}</main>
+          </div>
+        </SessionProvider>
+      </body>
+    </html>
+  );
+}

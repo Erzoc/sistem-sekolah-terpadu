@@ -11,6 +11,10 @@ export interface CreateUserDTO {
   role: string;
   tenantId?: string;
 }
+// Temporary stub for build
+export const userService = {
+  getUser: async () => null,
+};
 
 export interface UpdateUserDTO {
   name?: string;

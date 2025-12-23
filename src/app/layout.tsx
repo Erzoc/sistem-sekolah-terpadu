@@ -1,21 +1,17 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Providers } from "./providers";
+﻿import { Inter } from 'next/font/google';
+import './globals.css';
 
-export const metadata: Metadata = {
-  title: "Dashboard SSTF",
-  description: "Dashboard Guru",
-};
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body>
-        <Providers>{children}</Providers>
+    <html lang="id" className={inter.variable}>
+      <body className="font-sans antialiased">
+        {children}
       </body>
     </html>
   );

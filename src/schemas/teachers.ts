@@ -1,37 +1,24 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
-import { createId } from '@paralleldrive/cuid2';
-import { tenantsTable } from './tenants';
-import { usersTable } from './users';
 
 export const teachersTable = sqliteTable('teachers', {
-  // Primary Key
-  teacherId: text('teacher_id')
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  
-  // Foreign Keys
-  userId: text('user_id')
-    .references(() => usersTable.userId)
-    .notNull(),
-  
-  tenantId: text('tenant_id')
-    .references(() => tenantsTable.tenantId)
-    .notNull(),
-  
-  // Data Guru
-  nip: text('nip', { length: 50 }).notNull(),
-  
-  // Jabatan
-  position: text('position', { 
-    enum: ['guru_mapel', 'wali_kelas', 'guru_bk', 'kepala_sekolah'] 
-  }).default('guru_mapel'),
-  
-  // Status
-  status: text('status', { 
-    enum: ['aktif', 'nonaktif', 'pensiun'] 
-  }).default('aktif'),
-  
-  // Timestamps
-  createdAt: integer('created_at', { mode: 'timestamp' })
-    .$defaultFn(() => new Date()),
+  teacherId: text('teacher_id').primaryKey(),
+  tenantId: text('tenant_id').notNull().default('default'),
+  nip: text('nip'),
+  fullName: text('full_name').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone'),
+  position: text('position').notNull(), // Guru Tetap, Honorer, Kontrak
+  employmentStatus: text('employment_status').notNull().default('active'), // active, inactive, retired
+  joinDate: text('join_date').notNull(),
+  address: text('address'),
+  birthDate: text('birth_date'),
+  gender: text('gender'), // male, female
+  education: text('education'), // S1, S2, S3
+  certification: text('certification'), // yes, no
+  notes: text('notes'),
+  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+  updatedAt: text('updated_at').notNull().default('CURRENT_TIMESTAMP'),
 });
+
+export type Teacher = typeof teachersTable.$inferSelect;
+export type NewTeacher = typeof teachersTable.$inferInsert;

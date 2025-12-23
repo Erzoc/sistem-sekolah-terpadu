@@ -1,47 +1,24 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
-import { createId } from '@paralleldrive/cuid2';
-import { tenantsTable } from './tenants';
-import { usersTable } from './users';
-import { classesTable } from './classes';
 
 export const studentsTable = sqliteTable('students', {
-  // Primary Key
-  studentId: text('student_id')
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  
-  // Foreign Keys
-  userId: text('user_id')
-    .references(() => usersTable.userId)
-    .notNull(),
-  
-  tenantId: text('tenant_id')
-    .references(() => tenantsTable.tenantId)
-    .notNull(),
-  
-  classId: text('class_id')
-    .references(() => classesTable.classId),
-  
-  // Data Siswa
-  nisn: text('nisn', { length: 50 }).notNull(),
-  nis: text('nis', { length: 50 }),
-  fullName: text('full_name', { length: 255 }).notNull(),
-  dateOfBirth: integer('date_of_birth', { mode: 'timestamp' }),
-  
-  // Gender
-  gender: text('gender', { enum: ['male', 'female'] }),
-  
-  // Data Orang Tua
-  parentName: text('parent_name', { length: 255 }),
-  parentPhone: text('parent_phone', { length: 20 }),
-  parentEmail: text('parent_email', { length: 100 }),
-  
-  // Status
-  status: text('status', { 
-    enum: ['active', 'graduated', 'dropped'] 
-  }).default('active'),
-  
-  // Timestamps
-  createdAt: integer('created_at', { mode: 'timestamp' })
-    .$defaultFn(() => new Date()),
+  studentId: text('student_id').primaryKey(),
+  tenantId: text('tenant_id').notNull().default('default'),
+  nisn: text('nisn').notNull().unique(),
+  fullName: text('full_name').notNull(),
+  classId: text('class_id').notNull(),
+  gender: text('gender').notNull(), // male, female
+  birthDate: text('birth_date'),
+  birthPlace: text('birth_place'),
+  religion: text('religion'),
+  address: text('address'),
+  parentName: text('parent_name'),
+  parentPhone: text('parent_phone'),
+  enrollmentDate: text('enrollment_date').notNull(),
+  status: text('status').notNull().default('active'), // active, inactive, graduated, dropped
+  notes: text('notes'),
+  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+  updatedAt: text('updated_at').notNull().default('CURRENT_TIMESTAMP'),
 });
+
+export type Student = typeof studentsTable.$inferSelect;
+export type NewStudent = typeof studentsTable.$inferInsert;
