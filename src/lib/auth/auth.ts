@@ -14,9 +14,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
+        if (!credentials?.email || !credentials?.password) return null;
 
         const [user] = await db
           .select()
@@ -24,15 +22,10 @@ export const authOptions: NextAuthOptions = {
           .where(eq(usersTable.email, credentials.email))
           .limit(1);
 
-        if (!user || user.status !== 'active') {
-          return null;
-        }
+        if (!user || user.status !== 'active') return null;
 
         const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
-
-        if (!isValid) {
-          return null;
-        }
+        if (!isValid) return null;
 
         return {
           id: user.userId,
@@ -43,6 +36,11 @@ export const authOptions: NextAuthOptions = {
       }
     })
   ],
+
+  // ✅ INI YANG HILANG DARI TADI
+  pages: {
+    signIn: '/login',
+  },
 
   session: {
     strategy: "jwt",
