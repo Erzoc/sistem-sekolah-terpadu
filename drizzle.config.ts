@@ -1,13 +1,16 @@
 import type { Config } from "drizzle-kit";
 import { config } from 'dotenv';
 
+// Meload .env.local jika sedang di laptop
 config({ path: '.env.local' });
 
 export default {
-  schema: "./src/schemas/index.ts",
+  // Pastikan path schema ini menunjuk ke file schema definisi tabel Anda
+  schema: "./src/schemas/index.ts", 
   out: "./drizzle",
   dialect: "sqlite",
   dbCredentials: {
-    url: process.env.DATABASE_URL || "./dev.db",  // ← KONSISTEN dengan original
+    // Railway akan mengisi process.env.DATABASE_URL otomatis
+    url: process.env.DATABASE_URL || "./dev.db",
   },
 } satisfies Config;
