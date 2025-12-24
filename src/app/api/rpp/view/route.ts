@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/database/client';
 import { rppRecords } from '@/schemas';
 import { eq } from 'drizzle-orm';
+// ✅ FORCE DYNAMIC untuk menghindari static generation
+export const dynamic = 'force-dynamic';
+
+// ✅ TAMBAH: Suppress revalidate (optional)
+export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
   try {

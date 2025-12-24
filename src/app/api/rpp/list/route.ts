@@ -3,7 +3,11 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { db, rppRecords } from '@/schemas';
 import { desc, isNull } from 'drizzle-orm';
+// ✅ FORCE DYNAMIC untuk menghindari static generation
+export const dynamic = 'force-dynamic';
 
+// ✅ TAMBAH: Suppress revalidate (optional)
+export const revalidate = 0;
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

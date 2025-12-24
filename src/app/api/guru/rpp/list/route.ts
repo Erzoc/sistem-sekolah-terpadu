@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { db, rppRecords } from '@/schemas';
 import { desc, isNull } from 'drizzle-orm';
 
+export const dynamic = 'force-dynamic';
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

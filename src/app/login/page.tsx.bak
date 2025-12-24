@@ -4,7 +4,6 @@ import { signIn } from 'next-auth/react';
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-
 // 1. Pindahkan logika login ke dalam komponen terpisah
 function LoginForm() {
   const router = useRouter();
@@ -52,8 +51,10 @@ function LoginForm() {
 // 2. Bungkus komponen di dalam Suspense
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LoginForm />
-    </Suspense>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: 'sans-serif' }}>
+      <Suspense fallback={<div>Loading form...</div>}>
+        <LoginForm />
+      </Suspense>
+    </div>
   );
 }
