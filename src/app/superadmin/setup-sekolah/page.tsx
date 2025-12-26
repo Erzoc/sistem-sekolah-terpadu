@@ -578,7 +578,7 @@ export default function SetupSekolahPage() {
           </div>
         </div>
 
-                {/* PREVIEW SECTION - 1 column */}
+        {/* PREVIEW SECTION - 1 column */}
         <div className="space-y-6">
           {/* Live Preview - SOFT & PROFESSIONAL */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-lg overflow-hidden sticky top-6">
@@ -693,7 +693,7 @@ export default function SetupSekolahPage() {
               {/* Contact Info */}
               <div className="bg-purple-50 rounded-lg p-4 border border-purple-100 space-y-2">
                 <p className="text-xs text-purple-700 font-medium mb-2">Kontak</p>
-                
+
                 {formData.telepon && (
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 bg-purple-500 rounded flex items-center justify-center flex-shrink-0">
@@ -702,7 +702,7 @@ export default function SetupSekolahPage() {
                     <span className="text-sm text-purple-900">{formData.telepon}</span>
                   </div>
                 )}
-                
+
                 {formData.email && (
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 bg-purple-500 rounded flex items-center justify-center flex-shrink-0">
@@ -711,7 +711,7 @@ export default function SetupSekolahPage() {
                     <span className="text-sm text-purple-900 truncate">{formData.email}</span>
                   </div>
                 )}
-                
+
                 {formData.website && (
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 bg-purple-500 rounded flex items-center justify-center flex-shrink-0">
@@ -760,7 +760,6 @@ export default function SetupSekolahPage() {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
