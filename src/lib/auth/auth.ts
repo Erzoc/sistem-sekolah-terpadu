@@ -1,7 +1,7 @@
 ﻿import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/database/client";
-import { usersTable } from "@/schemas";
+import { usersTable } from "@/schemas/users";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
@@ -24,7 +24,7 @@ export const authOptions: NextAuthOptions = {
 
         if (!user || user.status !== 'active') return null;
 
-        const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
+        const isValid = await bcrypt.compare(credentials.password, user.passwordHash);  
         if (!isValid) return null;
 
         return {
@@ -32,12 +32,12 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.fullName,
           role: user.role,
+          tenantId: user.tenantId,
         };
       }
     })
   ],
 
-  // ✅ INI YANG HILANG DARI TADI
   pages: {
     signIn: '/login',
   },
@@ -52,15 +52,28 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.tenantId = user.tenantId;
       }
       return token;
     },
+    
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        session.user.tenantId = token.tenantId as string | null;
       }
       return session;
+    },
+
+    // ✅ ADD THIS: Role-based redirect after sign in
+    async redirect({ url, baseUrl }) {
+      // After sign in, check if it's callback URL
+      if (url.startsWith(baseUrl)) {
+        return url;
+      }
+      // Otherwise redirect to base URL (will be handled by middleware)
+      return baseUrl;
     },
   },
 };

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { TicketIcon } from '@heroicons/react/24/outline';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
@@ -15,37 +16,50 @@ import {
 } from 'lucide-react';
 
 const menuItems = [
-  { 
-    href: '/superadmin', 
-    label: 'Dashboard', 
+  {
+    href: '/superadmin',
+    label: 'Dashboard',
     icon: LayoutDashboard,
-    description: 'Overview & analytics'
+    description: 'Ringkasan & statistik'
   },
-  { 
+  {
     href: '/superadmin/users', 
-    label: 'User Management', 
+    label: 'Manajemen User',
     icon: Users,
-    description: 'Manage all users'
+    description: 'Kelola semua pengguna'
   },
-  { 
-    href: '/superadmin/tenants', 
-    label: 'Tenants', 
+
+  {
+    href: '/superadmin/setup-sekolah',
+    label: 'Setup Sekolah',
     icon: Building2,
-    description: 'School organizations'
+    description: 'Konfigurasi profil sekolah'
   },
-  { 
-    href: '/superadmin/analytics', 
-    label: 'Analytics', 
+  {
+  label: 'Kode Undangan',
+  href: '/superadmin/invites',
+  icon: TicketIcon,
+},
+  {
+    href: '/superadmin/tenants',
+    label: 'Tenant',
+    icon: Building2,
+    description: 'Organisasi sekolah'
+  },
+  {
+    href: '/superadmin/analytics',
+    label: 'Analitik',
     icon: BarChart3,
-    description: 'Platform metrics'
+    description: 'Metrik platform'
   },
-  { 
-    href: '/superadmin/settings', 
-    label: 'System Settings', 
+  {
+    href: '/superadmin/settings',
+    label: 'Pengaturan Sistem', 
     icon: Settings,
-    description: 'Platform configuration'
+    description: 'Konfigurasi platform'
   },
 ];
+
 
 export default function SuperAdminSidebar() {
   const [collapsed, setCollapsed] = useState(false);

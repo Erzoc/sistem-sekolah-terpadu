@@ -12,7 +12,7 @@
         "db:seed": "node scripts/seed.js",
         "db:seed-old": "tsx src/database/seed.ts",
         "db:studio": "drizzle-kit studio",
-        "db:seed-full": "tsx src/database/seed-full.ts",
+        "db:seed-superadmin": "tsx src/database/seed-superadmin.ts",
         "db:query-test": "tsx src/database/test-queries.ts",
         "db:import": "tsx src/database/import-from-excel.ts",
         "db:test-repos": "tsx src/repositories/test-repositories.ts",

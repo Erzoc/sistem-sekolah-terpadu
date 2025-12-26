@@ -10,6 +10,7 @@ export * from "./teacher_subjects";
 export * from "./assignments";
 export * from "./attendance";
 export * from "./grades";
+export * from './invites';
 
 export { simpleCalendars, type SimpleCalendar, type NewSimpleCalendar } from './simple-calendars';
 export { protaRecords, type ProtaRecord, type NewProtaRecord } from './prota-records';  // ← ADD THIS
