@@ -1,6 +1,7 @@
-﻿const { db } = require('./src/database/client');
-const { usersTable } = require('./src/schemas/users');
-const { tenantsTable } = require('./src/schemas/tenants');
+﻿const { db } = require('../src/database/client');
+const { usersTable } = require('../src/schemas/users');
+const { tenantsTable } = require('../src/schemas/tenants');
+
 const { eq } = require('drizzle-orm');
 const bcrypt = require('bcryptjs');
 const { createId } = require('@paralleldrive/cuid2');

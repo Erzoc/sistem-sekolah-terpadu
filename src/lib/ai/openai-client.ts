@@ -20,8 +20,8 @@ interface OpenAIEnhanceOutput {
 
 export class OpenAIClient {
   private apiKey: string;
-  private baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
-  private model = 'openai/gpt-3.5-turbo';
+  private baseUrl = 'https://api.openai.com/v1/chat/completions';
+  private model = 'gpt-3.5-turbo';
  // Free model
 
   constructor() {
@@ -41,9 +41,7 @@ export class OpenAIClient {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://gurupintar.site',
-          'X-Title': 'Guru Pintar - Teacher Toolbox',
-        },
+                  },
         body: JSON.stringify({
           model: this.model,
           messages: [

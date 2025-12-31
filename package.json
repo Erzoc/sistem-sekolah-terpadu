@@ -9,7 +9,7 @@
         "lint": "next lint",
         "type-check": "tsc --noEmit",
         "db:test": "tsx src/database/test-connection.ts",
-        "db:seed": "node scripts/seed.js",
+        "db:seed": "tsx scripts/seed-complete.ts",
         "db:seed-old": "tsx src/database/seed.ts",
         "db:studio": "drizzle-kit studio",
         "db:seed-full": "tsx src/database/seed-full.ts",
@@ -19,7 +19,11 @@
         "db:migrate": "drizzle-kit migrate",
         "db:generate": "drizzle-kit generate",
         "db:push": "drizzle-kit push",
-        "seed:demo": "tsx scripts/seed-demo-user.ts"
+        "seed:demo": "tsx scripts/seed-demo-user.ts",
+        "db:reset": "rm dev.db && npm run db:push && npm run db:seed",
+        "seed:tenant": "tsx scripts/create-default-tenant.ts",
+        "seed:superadmin": "tsx scripts/seed-superadmin.ts",
+        "seed:all": "npm run seed:tenant && npm run seed:superadmin && npm run seed:demo"
     },
     "dependencies": {
         "@ai-sdk/google": "^2.0.51",
