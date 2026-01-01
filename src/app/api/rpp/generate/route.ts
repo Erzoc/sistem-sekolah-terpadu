@@ -1,117 +1,116 @@
+// src/app/api/rpp/generate/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/database/client';
-import { prosemRecords, rppRecords } from '@/schemas';
-import { eq } from 'drizzle-orm';
-import { RppGenerator } from '@/lib/generators/rpp-generator';
-import { OpenAIClient } from '@/lib/ai/openai-client';
-
-function generateId(prefix: string = 'rpp'): string {
-  const timestamp = Date.now().toString(36);
-  const random = Math.random().toString(36).substring(2, 9);
-  return `${prefix}_${timestamp}_${random}`;
-}
+import { db } from '@/lib/db';
+import { rppPertemuan } from '@/lib/db/schema';
+import { generateRPPWithAI } from '@/lib/services/openai-client';
+import { nanoid } from 'nanoid';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { prosemId, kelasLevel, kelasDivision, templateType, generationMethod } = body;
+    
+    // Validate input
+    const {
+      guruId,
+      rppId,
+      prosemId,
+      nomorPertemuan,
+      jenjang,
+      kelas,
+      semester,
+      mataPelajaran,
+      topik,
+      subTopik,
+      jp,
+      tahunAjaran,
+      metodePembelajaran,
+      mediaPembelajaran,
+      sumberBelajar,
+      jenisPenilaian,
+    } = body;
 
-    if (!prosemId || !kelasLevel) {
+    if (!guruId || !topik || !jp) {
       return NextResponse.json(
-        { success: false, error: 'Prosem ID dan kelas level wajib diisi' },
+        { error: 'Missing required fields: guruId, topik, jp' },
         { status: 400 }
       );
     }
 
-    // Load Prosem
-    const prosem = await db
-      .select()
-      .from(prosemRecords)
-      .where(eq(prosemRecords.id, prosemId))
-      .limit(1);
-
-    if (!prosem || prosem.length === 0) {
-      return NextResponse.json(
-        { success: false, error: 'Prosem tidak ditemukan' },
-        { status: 404 }
-      );
-    }
-
-    const prosemData = prosem[0];
-    const weeklySchedule = JSON.parse(prosemData.weeklyScheduleJson);
-
-    const generator = new RppGenerator({
-      prosemId,
-      mapelCode: prosemData.mapelCode,
-      mapelName: prosemData.mapelName,
-      kelasLevel,
-      kelasDivision,
-      weeklySchedule,
-      templateType: templateType || 'merdeka',
-      generationMethod: generationMethod || 'template',
+    // Generate RPP with AI
+    console.log('🤖 Generating RPP with AI...');
+    const aiResult = await generateRPPWithAI({
+      jenjang,
+      kelas,
+      semester,
+      mataPelajaran,
+      topik,
+      subTopik,
+      jp,
+      tahunAjaran,
+      metodePembelajaran: metodePembelajaran || [],
+      mediaPembelajaran: mediaPembelajaran || [],
+      sumberBelajar: sumberBelajar || [],
+      jenisPenilaian: jenisPenilaian || [],
     });
-
-    let result;
-
-    // Choose generation method
-    if (generationMethod === 'ai') {
-      console.log('[RPP Generate] Using AI enhancement...');
-      const aiClient = new OpenAIClient();
-      result = await generator.generateWithAI(aiClient);
-    } else {
-      console.log('[RPP Generate] Using template method...');
-      result = generator.generate();
-    }
 
     // Save to database
-    const rppId = generateId('rpp');
+    const pertemuanId = nanoid();
+    const now = new Date().toISOString();
 
-    await db.insert(rppRecords).values({
-      id: rppId,
-      tenantId: prosemData.tenantId,
-      prosemRecordId: prosemId,
-      protaRecordId: prosemData.protaRecordId,
-      simpleCalendarId: prosemData.simpleCalendarId,
-      mapelCode: prosemData.mapelCode,
-      mapelName: prosemData.mapelName,
-      kelasLevel,
-      kelasDivision,
-      academicYear: prosemData.academicYear,
-      semester: prosemData.semester,
-      pertemuanListJson: JSON.stringify(result.pertemuanList),
-      templateType: templateType || 'merdeka',
-      generationMethod: generationMethod || 'template',
-      aiProvider: generationMethod === 'ai' ? 'openai' : null,
-      totalPertemuan: result.totalPertemuan,
-      totalJamPelajaran: result.totalJamPelajaran,
-      status: 'draft',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+    await db.insert(rppPertemuan).values({
+      id: pertemuanId,
+      rppId: rppId || nanoid(),
+      guruId,
+      prosemId: prosemId || '',
+      nomorPertemuan: nomorPertemuan || 1,
+      topik,
+      subTopik: subTopik || null,
+      jp,
+      
+      // Manual inputs
+      metodePembelajaran: JSON.stringify(metodePembelajaran || []),
+      mediaPembelajaran: JSON.stringify(mediaPembelajaran || []),
+      sumberBelajar: JSON.stringify(sumberBelajar || []),
+      jenisPenilaian: JSON.stringify(jenisPenilaian || []),
+      
+      // AI generated
+      kompetensiInti: JSON.stringify(aiResult.kompetensiInti),
+      capaianPembelajaran: JSON.stringify(aiResult.capaianPembelajaran),
+      tujuanPembelajaran: JSON.stringify(aiResult.tujuanPembelajaran),
+      materi: JSON.stringify(aiResult.materi),
+      kegiatanPendahuluan: JSON.stringify(aiResult.kegiatanPendahuluan),
+      kegiatanInti: JSON.stringify(aiResult.kegiatanInti),
+      kegiatanPenutup: JSON.stringify(aiResult.kegiatanPenutup),
+      asesmen: JSON.stringify(aiResult.asesmen),
+      
+      status: 'completed',
+      errorMessage: null,
+      isEdited: 0,
+      retryCount: 0,
+      createdAt: now,
+      updatedAt: now,
     });
+
+    console.log('✅ RPP saved to database:', pertemuanId);
 
     return NextResponse.json({
       success: true,
-      rppId,
-      message: `RPP berhasil dibuat ${generationMethod === 'ai' ? 'dengan AI enhancement' : ''}`,
+      message: 'RPP generated successfully!',
       data: {
-        id: rppId,
-        mapelName: prosemData.mapelName,
-        kelasLevel,
-        kelasDivision,
-        pertemuanList: result.pertemuanList,
-        totalPertemuan: result.totalPertemuan,
-        totalJamPelajaran: result.totalJamPelajaran,
-        generationMethod,
+        id: pertemuanId,
+        topik,
+        status: 'completed',
+        ...aiResult,
       },
     });
-  } catch (error) {
-    console.error('[RPP Generate] Error:', error);
+
+  } catch (error: any) {
+    console.error('❌ Generate RPP Error:', error);
     
     return NextResponse.json(
       {
         success: false,
-        error: 'Gagal membuat RPP',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        error: error.message || 'Failed to generate RPP',
       },
       { status: 500 }
     );

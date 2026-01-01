@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prota v5 - Compact</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .preview-content { font-size: 11px; line-height: 1.4; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0">
+      <div class="p-6 border-b">
+        <h1 class="text-lg font-bold text-gray-900">Teacher Toolbox</h1>
+        <p class="text-xs text-gray-500 mt-1">Workspace Guru</p>
+      </div>
+      <nav class="p-4 space-y-2">
+        <div class="px-4 py-3 rounded-lg text-gray-700">Dashboard</div>
+        <div class="px-4 py-3 rounded-lg bg-teal-50 text-teal-700 font-medium">RPP & Perencanaan</div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto p-6">
+      
+      <!-- Header -->
+      <div class="mb-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-green-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-xl font-bold text-gray-900">Program Tahunan (Prota)</h1>
+              <p class="text-xs text-gray-600">Langkah 2: Breakdown CP per Tahun Ajaran</p>
+            </div>
+          </div>
+          
+          <!-- Kaldik Reference Inline -->
+          <div class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <div>
+              <p class="text-xs font-semibold text-blue-900">2025/2026 Sem 1</p>
+              <p class="text-xs text-blue-700">18 minggu efektif</p>
+            </div>
+            <button class="text-blue-600 hover:text-blue-700">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div class="p-5">
+          <form class="space-y-4" id="protaForm">
+            
+            <!-- Section 1: Info Mapel - COMPACT (1 row, 4 cols) -->
+            <div>
+              <h3 class="text-sm font-bold text-gray-900 mb-2 flex items-center gap-2">
+                <span class="w-6 h-6 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-xs font-bold">1</span>
+                Informasi Mata Pelajaran
+              </h3>
+              
+              <div class="grid grid-cols-4 gap-2">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-700 mb-1">Jenjang <span class="text-red-500">*</span></label>
+                  <select id="jenjang" class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500">
+                    <option value="sma" selected>SMA</option>
+                    <option value="smp">SMP</option>
+                    <option value="sd">SD</option>
+                    <option value="ma">MA</option>
+                    <option value="mts">MTs</option>
+                    <option value="mi">MI</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-gray-700 mb-1">Tingkat <span class="text-red-500">*</span></label>
+                  <select id="kelas" class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500">
+                    <option value="10" selected>Kelas 10</option>
+                    <option value="11">Kelas 11</option>
+                    <option value="12">Kelas 12</option>
+                  </select>
+                </div>
+
+                <div class="col-span-2">
+                  <label class="block text-xs font-semibold text-gray-700 mb-1">Mata Pelajaran <span class="text-red-500">*</span></label>
+                  <select id="mapel" class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500">
+                    <optgroup label="Umum">
+                      <option value="matematika">Matematika</option>
+                      <option value="bahasa-indonesia">Bahasa Indonesia</option>
+                      <option value="bahasa-inggris">Bahasa Inggris</option>
+                    </optgroup>
+                    <optgroup label="Teknologi & Bahasa">
+                      <option value="informatika" selected>Informatika</option>
+                      <option value="bahasa-arab">Bahasa Arab</option>
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 2: CP List - COMPACT CARDS (2 cols) -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                  <span class="w-6 h-6 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-xs font-bold">2</span>
+                  Capaian Pembelajaran (CP) - <span class="text-green-600" id="totalCP">6</span> CP
+                </h3>
+                <button type="button" class="px-3 py-1.5 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Tambah
+                </button>
+              </div>
+
+              <!-- CP Grid - 2 Columns -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-2" id="cpContainer">
+                
+                <!-- CP Card 1 -->
+                <div class="relative border border-gray-200 rounded-lg p-2.5 hover:border-green-400 hover:shadow-sm transition-all group">
+                  <span class="absolute -top-2 -left-2 w-5 h-5 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow">1</span>
+                  <button type="button" class="absolute -top-2 -right-2 w-5 h-5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-red-700">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+
+                  <div class="space-y-1.5">
+                    <div>
+                      <input type="text" value="Dasar Pemrograman" placeholder="Nama CP" class="w-full px-2 py-1 text-xs font-bold border-0 border-b border-gray-200 focus:border-green-500 focus:ring-0" />
+                      <input type="text" value="CP.INF.10.1" placeholder="Kode (opsional)" class="w-full px-2 py-0.5 text-xs text-gray-600 border-0 focus:ring-0" />
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-1.5">
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">Minggu</label>
+                        <input type="number" value="5" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500 cp-minggu" />
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">JP/Minggu</label>
+                        <input type="number" value="3" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500 cp-jp" />
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">Total</label>
+                        <div class="px-2 py-1 text-xs bg-green-50 border border-green-200 rounded text-green-700 font-bold text-center cp-total">15</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CP Card 2 -->
+                <div class="relative border border-gray-200 rounded-lg p-2.5 hover:border-green-400 hover:shadow-sm transition-all group">
+                  <span class="absolute -top-2 -left-2 w-5 h-5 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow">2</span>
+                  <button type="button" class="absolute -top-2 -right-2 w-5 h-5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-red-700">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+
+                  <div class="space-y-1.5">
+                    <div>
+                      <input type="text" value="Algoritma & Struktur Data" placeholder="Nama CP" class="w-full px-2 py-1 text-xs font-bold border-0 border-b border-gray-200 focus:border-green-500 focus:ring-0" />
+                      <input type="text" value="CP.INF.10.2" placeholder="Kode (opsional)" class="w-full px-2 py-0.5 text-xs text-gray-600 border-0 focus:ring-0" />
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-1.5">
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">Minggu</label>
+                        <input type="number" value="6" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500 cp-minggu" />
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">JP/Minggu</label>
+                        <input type="number" value="3" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500 cp-jp" />
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">Total</label>
+                        <div class="px-2 py-1 text-xs bg-green-50 border border-green-200 rounded text-green-700 font-bold text-center cp-total">18</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CP Card 3 -->
+                <div class="relative border border-gray-200 rounded-lg p-2.5 hover:border-green-400 hover:shadow-sm transition-all group">
+                  <span class="absolute -top-2 -left-2 w-5 h-5 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow">3</span>
+                  <button type="button" class="absolute -top-2 -right-2 w-5 h-5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-red-700">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+
+                  <div class="space-y-1.5">
+                    <div>
+                      <input type="text" value="Database & SQL" placeholder="Nama CP" class="w-full px-2 py-1 text-xs font-bold border-0 border-b border-gray-200 focus:border-green-500 focus:ring-0" />
+                      <input type="text" value="CP.INF.10.3" placeholder="Kode (opsional)" class="w-full px-2 py-0.5 text-xs text-gray-600 border-0 focus:ring-0" />
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-1.5">
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">Minggu</label>
+                        <input type="number" value="7" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500 cp-minggu" />
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">JP/Minggu</label>
+                        <input type="number" value="3" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500 cp-jp" />
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">Total</label>
+                        <div class="px-2 py-1 text-xs bg-green-50 border border-green-200 rounded text-green-700 font-bold text-center cp-total">21</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CP Card 4 -->
+                <div class="relative border border-gray-200 rounded-lg p-2.5 hover:border-green-400 hover:shadow-sm transition-all group">
+                  <span class="absolute -top-2 -left-2 w-5 h-5 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow">4</span>
+                  <button type="button" class="absolute -top-2 -right-2 w-5 h-5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-red-700">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+
+                  <div class="space-y-1.5">
+                    <div>
+                      <input type="text" value="Web Programming" placeholder="Nama CP" class="w-full px-2 py-1 text-xs font-bold border-0 border-b border-gray-200 focus:border-green-500 focus:ring-0" />
+                      <input type="text" value="CP.INF.10.4" placeholder="Kode (opsional)" class="w-full px-2 py-0.5 text-xs text-gray-600 border-0 focus:ring-0" />
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-1.5">
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">Minggu</label>
+                        <input type="number" value="8" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500 cp-minggu" />
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">JP/Minggu</label>
+                        <input type="number" value="4" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500 cp-jp" />
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">Total</label>
+                        <div class="px-2 py-1 text-xs bg-green-50 border border-green-200 rounded text-green-700 font-bold text-center cp-total">32</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CP Card 5 -->
+                <div class="relative border border-gray-200 rounded-lg p-2.5 hover:border-green-400 hover:shadow-sm transition-all group">
+                  <span class="absolute -top-2 -left-2 w-5 h-5 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow">5</span>
+                  <button type="button" class="absolute -top-2 -right-2 w-5 h-5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-red-700">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+
+                  <div class="space-y-1.5">
+                    <div>
+                      <input type="text" value="Mobile App Development" placeholder="Nama CP" class="w-full px-2 py-1 text-xs font-bold border-0 border-b border-gray-200 focus:border-green-500 focus:ring-0" />
+                      <input type="text" value="CP.INF.10.5" placeholder="Kode (opsional)" class="w-full px-2 py-0.5 text-xs text-gray-600 border-0 focus:ring-0" />
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-1.5">
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">Minggu</label>
+                        <input type="number" value="6" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500 cp-minggu" />
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">JP/Minggu</label>
+                        <input type="number" value="4" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500 cp-jp" />
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">Total</label>
+                        <div class="px-2 py-1 text-xs bg-green-50 border border-green-200 rounded text-green-700 font-bold text-center cp-total">24</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CP Card 6 -->
+                <div class="relative border border-gray-200 rounded-lg p-2.5 hover:border-green-400 hover:shadow-sm transition-all group">
+                  <span class="absolute -top-2 -left-2 w-5 h-5 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow">6</span>
+                  <button type="button" class="absolute -top-2 -right-2 w-5 h-5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-red-700">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+
+                  <div class="space-y-1.5">
+                    <div>
+                      <input type="text" value="Cyber Security Basics" placeholder="Nama CP" class="w-full px-2 py-1 text-xs font-bold border-0 border-b border-gray-200 focus:border-green-500 focus:ring-0" />
+                      <input type="text" value="CP.INF.10.6" placeholder="Kode (opsional)" class="w-full px-2 py-0.5 text-xs text-gray-600 border-0 focus:ring-0" />
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-1.5">
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">Minggu</label>
+                        <input type="number" value="4" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500 cp-minggu" />
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">JP/Minggu</label>
+                        <input type="number" value="3" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500 cp-jp" />
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-600 mb-0.5">Total</label>
+                        <div class="px-2 py-1 text-xs bg-green-50 border border-green-200 rounded text-green-700 font-bold text-center cp-total">12</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Summary - INLINE -->
+            <div class="flex items-center justify-between p-2.5 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg">
+              <div class="flex items-center gap-4">
+                <div class="text-center">
+                  <div class="text-xl font-bold text-green-600" id="summaryCP">6</div>
+                  <div class="text-xs text-gray-600">CP</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xl font-bold text-blue-600" id="summaryMinggu">36</div>
+                  <div class="text-xs text-gray-600">Minggu</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xl font-bold text-purple-600" id="summaryJP">122</div>
+                  <div class="text-xs text-gray-600">JP</div>
+                </div>
+                <div class="flex items-center gap-2" id="validationMsg">
+                  <svg class="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                  <div>
+                    <p class="text-xs font-semibold text-yellow-900">Melebihi Kaldik!</p>
+                    <p class="text-xs text-yellow-700">36 minggu > 18 tersedia</p>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="px-3 py-1.5 text-xs bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-semibold">
+                Sesuaikan
+              </button>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center justify-between pt-3 border-t">
+              <button type="button" class="px-4 py-2 text-xs text-gray-700 hover:bg-gray-100 rounded-lg">
+                ← Kembali
+              </button>
+              <div class="flex gap-2">
+                <button type="button" class="px-4 py-2 text-xs border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                  Draft
+                </button>
+                <button type="submit" class="px-5 py-2 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold shadow-lg flex items-center gap-2">
+                  Lanjut ke Prosem
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Right Sidebar: Preview -->
+    <aside class="w-80 bg-white border-l border-gray-200 flex-shrink-0 overflow-y-auto">
+      <div class="sticky top-0 bg-white border-b border-gray-200 p-3 z-10">
+        <h3 class="text-sm font-bold text-gray-900">📊 Preview Prota</h3>
+        <p class="text-xs text-gray-500">Update otomatis</p>
+      </div>
+
+      <div class="p-4 preview-content">
+        
+        <div class="text-center mb-3 pb-2 border-b-2 border-gray-300">
+          <h2 class="text-sm font-bold uppercase">Program Tahunan</h2>
+          <p class="text-xs mt-0.5">(PROTA)</p>
+        </div>
+
+        <!-- Identitas -->
+        <table class="w-full text-xs mb-3">
+          <tr>
+            <td class="py-0.5 pr-2 w-24">Satuan Pendidikan</td>
+            <td class="py-0.5 pr-1 w-3">:</td>
+            <td class="py-0.5 font-semibold" id="prevJenjang">SMA</td>
+          </tr>
+          <tr>
+            <td class="py-0.5 pr-2">Kelas</td>
+            <td class="py-0.5 pr-1">:</td>
+            <td class="py-0.5 font-semibold" id="prevKelas">10</td>
+          </tr>
+          <tr>
+            <td class="py-0.5 pr-2">Mata Pelajaran</td>
+            <td class="py-0.5 pr-1">:</td>
+            <td class="py-0.5 font-semibold" id="prevMapel">Informatika</td>
+          </tr>
+          <tr>
+            <td class="py-0.5 pr-2">Tahun Ajaran</td>
+            <td class="py-0.5 pr-1">:</td>
+            <td class="py-0.5 font-semibold">2025/2026</td>
+          </tr>
+          <tr>
+            <td class="py-0.5 pr-2">Semester</td>
+            <td class="py-0.5 pr-1">:</td>
+            <td class="py-0.5 font-semibold">1 (Ganjil)</td>
+          </tr>
+        </table>
+
+        <!-- CP Table Preview -->
+        <div class="mb-3">
+          <h4 class="text-xs font-bold mb-1 bg-green-100 px-2 py-1 rounded">Capaian Pembelajaran</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs border-collapse">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th class="border border-gray-300 px-1 py-0.5 text-center w-6">No</th>
+                  <th class="border border-gray-300 px-1 py-0.5 text-left">Capaian Pembelajaran</th>
+                  <th class="border border-gray-300 px-1 py-0.5 text-center w-12">Minggu</th>
+                  <th class="border border-gray-300 px-1 py-0.5 text-center w-12">JP</th>
+                </tr>
+              </thead>
+              <tbody id="prevCPTable">
+                <tr>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center">1</td>
+                  <td class="border border-gray-300 px-1 py-0.5">Dasar Pemrograman</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center">5</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center font-semibold">15</td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center">2</td>
+                  <td class="border border-gray-300 px-1 py-0.5">Algoritma & Struktur Data</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center">6</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center font-semibold">18</td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center">3</td>
+                  <td class="border border-gray-300 px-1 py-0.5">Database & SQL</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center">7</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center font-semibold">21</td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center">4</td>
+                  <td class="border border-gray-300 px-1 py-0.5">Web Programming</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center">8</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center font-semibold">32</td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center">5</td>
+                  <td class="border border-gray-300 px-1 py-0.5">Mobile App Development</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center">6</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center font-semibold">24</td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center">6</td>
+                  <td class="border border-gray-300 px-1 py-0.5">Cyber Security Basics</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center">4</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center font-semibold">12</td>
+                </tr>
+                <tr class="bg-green-50 font-bold">
+                  <td colspan="2" class="border border-gray-300 px-1 py-0.5 text-right">TOTAL</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center" id="prevTotalMinggu">36</td>
+                  <td class="border border-gray-300 px-1 py-0.5 text-center" id="prevTotalJP">122</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Validation Info -->
+        <div class="p-2 bg-yellow-50 border border-yellow-200 rounded">
+          <p class="text-xs font-semibold text-yellow-900 mb-0.5">⚠️ Validasi:</p>
+          <p class="text-xs text-yellow-800" id="prevValidation">Total 36 minggu melebihi 18 minggu efektif di Kaldik</p>
+        </div>
+
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    const form = document.getElementById('protaForm');
+
+    function updateCalculations() {
+      const cards = document.querySelectorAll('#cpContainer > div');
+      let totalCP = cards.length;
+      let totalMinggu = 0;
+      let totalJP = 0;
+
+      cards.forEach((card, index) => {
+        const minggu = parseInt(card.querySelector('.cp-minggu').value) || 0;
+        const jp = parseInt(card.querySelector('.cp-jp').value) || 0;
+        const total = minggu * jp;
+        
+        card.querySelector('.cp-total').textContent = total;
+        totalMinggu += minggu;
+        totalJP += total;
+      });
+
+      // Update summary
+      document.getElementById('totalCP').textContent = totalCP;
+      document.getElementById('summaryCP').textContent = totalCP;
+      document.getElementById('summaryMinggu').textContent = totalMinggu;
+      document.getElementById('summaryJP').textContent = totalJP;
+
+      // Update preview
+      document.getElementById('prevTotalMinggu').textContent = totalMinggu;
+      document.getElementById('prevTotalJP').textContent = totalJP;
+
+      // Validation
+      const kaldikMinggu = 18; // From Kaldik
+      const validationMsg = document.getElementById('validationMsg');
+      const prevValidation = document.getElementById('prevValidation');
+      
+      if (totalMinggu > kaldikMinggu) {
+        validationMsg.innerHTML = `
+          <svg class="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+          <div>
+            <p class="text-xs font-semibold text-yellow-900">Melebihi Kaldik!</p>
+            <p class="text-xs text-yellow-700">${totalMinggu} minggu > ${kaldikMinggu} tersedia</p>
+          </div>
+        `;
+        prevValidation.textContent = `Total ${totalMinggu} minggu melebihi ${kaldikMinggu} minggu efektif di Kaldik`;
+      } else if (totalMinggu === kaldikMinggu) {
+        validationMsg.innerHTML = `
+          <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          <div>
+            <p class="text-xs font-semibold text-green-900">Perfect!</p>
+            <p class="text-xs text-green-700">${totalMinggu} minggu = ${kaldikMinggu} tersedia</p>
+          </div>
+        `;
+        prevValidation.textContent = `✅ Total ${totalMinggu} minggu sesuai dengan ${kaldikMinggu} minggu efektif`;
+      } else {
+        validationMsg.innerHTML = `
+          <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+          <div>
+            <p class="text-xs font-semibold text-blue-900">Masih Ada Sisa</p>
+            <p class="text-xs text-blue-700">${totalMinggu} minggu < ${kaldikMinggu} tersedia</p>
+          </div>
+        `;
+        prevValidation.textContent = `ℹ️ Total ${totalMinggu} minggu, masih ada ${kaldikMinggu - totalMinggu} minggu tersisa`;
+      }
+    }
+
+    function updatePreview() {
+      document.getElementById('prevJenjang').textContent = document.getElementById('jenjang').options[document.getElementById('jenjang').selectedIndex].text;
+      document.getElementById('prevKelas').textContent = document.getElementById('kelas').value;
+      document.getElementById('prevMapel').textContent = document.getElementById('mapel').options[document.getElementById('mapel').selectedIndex].text;
+      
+      // Update table
+      const cards = document.querySelectorAll('#cpContainer > div');
+      let tableHTML = '';
+      let totalMinggu = 0;
+      let totalJP = 0;
+      
+      cards.forEach((card, index) => {
+        const nama = card.querySelector('input[type="text"]').value || '-';
+        const minggu = parseInt(card.querySelector('.cp-minggu').value) || 0;
+        const jp = parseInt(card.querySelector('.cp-jp').value) || 0;
+        const total = minggu * jp;
+        
+        totalMinggu += minggu;
+        totalJP += total;
+        
+        tableHTML += `
+          <tr>
+            <td class="border border-gray-300 px-1 py-0.5 text-center">${index + 1}</td>
+            <td class="border border-gray-300 px-1 py-0.5">${nama}</td>
+            <td class="border border-gray-300 px-1 py-0.5 text-center">${minggu}</td>
+            <td class="border border-gray-300 px-1 py-0.5 text-center font-semibold">${total}</td>
+          </tr>
+        `;
+      });
+      
+      tableHTML += `
+        <tr class="bg-green-50 font-bold">
+          <td colspan="2" class="border border-gray-300 px-1 py-0.5 text-right">TOTAL</td>
+          <td class="border border-gray-300 px-1 py-0.5 text-center">${totalMinggu}</td>
+          <td class="border border-gray-300 px-1 py-0.5 text-center">${totalJP}</td>
+        </tr>
+      `;
+      
+      document.getElementById('prevCPTable').innerHTML = tableHTML;
+    }
+
+    // Attach listeners
+    form.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('input', () => {
+        updateCalculations();
+        updatePreview();
+      });
+      el.addEventListener('change', () => {
+        updateCalculations();
+        updatePreview();
+      });
+    });
+
+    // Initial
+    updateCalculations();
+    updatePreview();
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('✅ Prota disimpan!\n\nSelanjutnya: Prosem (Program Semester)');
+    });
+  </script>
+
+</body>
+</html>

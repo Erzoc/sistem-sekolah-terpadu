@@ -55,3 +55,105 @@ export const rpp = sqliteTable('rpp', {
   status: text('status').notNull(),
   createdAt: text('created_at').notNull(),
 });
+
+// ============================================
+// RPP MVP EXTENSIONS (Added 2026-01-01)
+// ============================================
+
+// RPP Pertemuan (Detail per pertemuan)
+export const rppPertemuan = sqliteTable('rpp_pertemuan', {
+  id: text('id').primaryKey(),
+  rppId: text('rpp_id').notNull(),
+  guruId: text('guru_id').notNull(),
+  prosemId: text('prosem_id').notNull(),
+  nomorPertemuan: integer('nomor_pertemuan').notNull(),
+  topik: text('topik').notNull(),
+  subTopik: text('sub_topik'),
+  jp: integer('jp').notNull(),
+  metodePembelajaran: text('metode_pembelajaran'),
+  mediaPembelajaran: text('media_pembelajaran'),
+  sumberBelajar: text('sumber_belajar'),
+  jenisPenilaian: text('jenis_penilaian'),
+  kompetensiInti: text('kompetensi_inti'),
+  capaianPembelajaran: text('capaian_pembelajaran'),
+  tujuanPembelajaran: text('tujuan_pembelajaran'),
+  materi: text('materi'),
+  kegiatanPendahuluan: text('kegiatan_pendahuluan'),
+  kegiatanInti: text('kegiatan_inti'),
+  kegiatanPenutup: text('kegiatan_penutup'),
+  asesmen: text('asesmen'),
+  status: text('status').notNull(),
+  errorMessage: text('error_message'),
+  isEdited: integer('is_edited').notNull().default(0),
+  retryCount: integer('retry_count').notNull().default(0),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+
+// RPP Edit History
+export const rppEditHistory = sqliteTable('rpp_edit_history', {
+  id: text('id').primaryKey(),
+  rppPertemuanId: text('rpp_pertemuan_id').notNull(),
+  section: text('section').notNull(),
+  contentBefore: text('content_before'),
+  contentAfter: text('content_after'),
+  editedAt: text('edited_at').notNull(),
+});
+
+// Batch Jobs
+export const batchJobs = sqliteTable('batch_jobs', {
+  id: text('id').primaryKey(),
+  guruId: text('guru_id').notNull(),
+  rppId: text('rpp_id').notNull(),
+  totalRpp: integer('total_rpp').notNull(),
+  completed: integer('completed').notNull().default(0),
+  failed: integer('failed').notNull().default(0),
+  status: text('status').notNull(),
+  batchInput: text('batch_input'),
+  rppPertemuanIds: text('rpp_pertemuan_ids'),
+  createdAt: text('created_at').notNull(),
+  startedAt: text('started_at'),
+  completedAt: text('completed_at'),
+});
+
+// Batch Failed Items
+export const batchFailedItems = sqliteTable('batch_failed_items', {
+  id: text('id').primaryKey(),
+  batchId: text('batch_id').notNull(),
+  itemNumber: integer('item_number').notNull(),
+  topik: text('topik'),
+  errorMessage: text('error_message'),
+  retryCount: integer('retry_count').notNull().default(0),
+  failedAt: text('failed_at').notNull(),
+});
+
+// App Template
+export const appTemplate = sqliteTable('app_template', {
+  id: text('id').primaryKey().default('default'),
+  logoPath: text('logo_path'),
+  schoolName: text('school_name').notNull().default('Nama Sekolah'),
+  address: text('address'),
+  phone: text('phone'),
+  website: text('website'),
+  headerLayout: text('header_layout').notNull().default('logo_left'),
+  showPageNumber: integer('show_page_number').notNull().default(1),
+  showGeneratedDate: integer('show_generated_date').notNull().default(1),
+  showTeacherName: integer('show_teacher_name').notNull().default(0),
+  fontFamily: text('font_family').notNull().default('Times New Roman'),
+  fontSize: integer('font_size').notNull().default(12),
+  showCapaianPembelajaran: integer('show_capaian_pembelajaran').notNull().default(1),
+  showKodeCp: integer('show_kode_cp').notNull().default(0),
+  updatedAt: text('updated_at').notNull(),
+});
+
+// Template Test Logs
+export const templateTestLogs = sqliteTable('template_test_logs', {
+  id: text('id').primaryKey(),
+  testPdfPath: text('test_pdf_path'),
+  status: text('status').notNull(),
+  errorMessage: text('error_message'),
+  testedAt: text('tested_at').notNull(),
+});
+
+// Export all tables for API use
+export * from './schema';
